@@ -83,7 +83,8 @@ const creatCard = async () => {
     btnEdit.addEventListener('click', async (e) => {
       e.stopPropagation();
       const user = await fetchUser(e.target.id)
-      console.log(user);
+      app.removeChild(cardContainer);
+      addData(user)
     });
 
   }
@@ -133,44 +134,37 @@ const userProfil = async (user) => {
   })
 }
 //function creat input
-// const creatInput = (classeName, type, placeholder) => {
-//   const inputFile = document.createElement("input");
-//   inputFile.classList.add(classeName)
+const creatInput = (classeName, type, placeholder) => {
+  const input = document.createElement("input");
+  input.classList.add(classeName);
+  input.setAttribute("type", type);
+  input.setAttribute("placeholder", placeholder);
+  return input
 
-// }
+}
 
 // fonction creat page formulaire
-function addData() {
+function addData(user) {
+
   const forme = document.createElement("form");
   forme.classList.add("form_add")
   app.appendChild(forme);
 
-  const inputFile = document.createElement("input");
-  inputFile.classList.add("input_file")
-  inputFile.setAttribute("type", "file");
+  const inputFile = creatInput("input_file", "file", "placeholder")
   inputFile.setAttribute("accept", "image/*");
 
 
   forme.appendChild(inputFile)
 
-  const inputName = document.createElement("input");
-  inputName.classList.add("input_name")
-  inputName.setAttribute("type", "text");
-  inputName.setAttribute("placeholder", "name");
+  const inputName = creatInput("input_name", "text", "name")
   inputName.setAttribute("required", "required");
   forme.appendChild(inputName)
 
-  const inputEmail = document.createElement("input");
-  inputEmail.classList.add("input_email")
-  inputEmail.setAttribute("type", "email");
-  inputEmail.setAttribute("placeholder", "email");
+  const inputEmail = creatInput("input_email", "email", "email")
   inputEmail.setAttribute("required", "required");
   forme.appendChild(inputEmail)
 
-  const inputAvatar = document.createElement("input");
-  inputAvatar.classList.add("input_avata")
-  inputAvatar.setAttribute("type", "text");
-  inputAvatar.setAttribute("placeholder", "avatar");
+  const inputAvatar = creatInput("input_avata", "text", "avatar")
   inputAvatar.setAttribute("required", "required");
   forme.appendChild(inputAvatar)
 
@@ -178,10 +172,18 @@ function addData() {
 
   })
 
-  const buttonSav = creatButtonSA("submit", "btn-save", "Save");
+  const buttonSav = creatButtonSA("submit", "btn-save", user ? "save" : "creat ");
   const buttonCancel = creatButtonSA("button", "btn-cancel", "Cancel");
   forme.appendChild(buttonSav);
   forme.appendChild(buttonCancel);
+  if (user) {
+    inputName.value = user.name;
+    inputAvatar.value = user.avatar;
+    inputEmail.value = user.email;
+    name = user.name;
+    avatar = user.avatar;
+    email = user.email;
+  }
   inputName.addEventListener("input", (e) => {
     name = e.target.value.trim();
   })
@@ -192,18 +194,34 @@ function addData() {
     avatar = e.target.value.trim();
   })
   buttonSav.addEventListener("click", async (e) => {
-    if (name != '' && email != '' && avatar != '') {
-      e.preventDefault();
-      await postUser({ name, email, avatar });
-      const form = document.querySelector(".form_add");
-      app.removeChild(form)
-      name = "";
-      email = "";
-      avatar = "";
-
-      await creatCard();
+    e.preventDefault();
+    if (user) {
+      if (name != '' && email != '' && avatar != '') {
+        await put(user.id, { name, email, avatar });
+        const form = document.querySelector(".form_add");
+        app.removeChild(form)
+        name = "";
+        email = "";
+        avatar = "";
+        await creatCard();
+      }
+    } else {
+      if (name != '' && email != '' && avatar != '') {
+        await postUser({ name, email, avatar });
+        const form = document.querySelector(".form_add");
+        app.removeChild(form)
+        name = "";
+        email = "";
+        avatar = "";
+        await creatCard();
+      }
     }
 
+
+  })
+  buttonCancel.addEventListener("click", () => {
+    app.removeChild(forme);
+    creatCard();
   })
 
 }

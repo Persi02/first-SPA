@@ -1,6 +1,8 @@
 import './style.css'
 import { creatButtonSA, fetchUser, fetchUsers, postUser } from './lib/post';
 import { put } from './lib/updatUser';
+import { deletUser } from './lib/deletUser';
+
 const app = document.querySelector("#app");
 let name = "";
 let email = "";
@@ -49,6 +51,19 @@ const creatCard = async () => {
 </svg>`;
     card_user.appendChild(btnEdit);
 
+    const btnTrash = document.createElement("div");
+    btnTrash.id = allUsers[i].id;
+    btnTrash.classList.add("btn_trash");
+    btnTrash.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-trash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+   <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+   <path d="M4 7l16 0"></path>
+   <path d="M10 11l0 6"></path>
+   <path d="M14 11l0 6"></path>
+   <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12"></path>
+   <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3"></path>
+</svg>`;
+    card_user.appendChild(btnTrash);
+
     const card_avatar = document.createElement("figure");
     card_user.appendChild(card_avatar);
     const imageAvatar = document.createElement("img");
@@ -76,9 +91,11 @@ const creatCard = async () => {
     });
     card_user.addEventListener('mouseover', () => {
       btnEdit.classList.add("hover");
+      btnTrash.classList.add("hover");
     });
     card_user.addEventListener('mouseleave', () => {
       btnEdit.classList.remove("hover");
+      btnTrash.classList.remove("hover");
     });
     btnEdit.addEventListener('click', async (e) => {
       e.stopPropagation();
@@ -86,6 +103,13 @@ const creatCard = async () => {
       app.removeChild(cardContainer);
       addData(user)
     });
+    btnTrash.addEventListener("click", async (e) => {
+      e.stopPropagation();
+      deletUser(e.target.id);
+      app.removeChild(cardContainer);
+      await fetchUsers();
+      creatCard();
+    })
 
   }
   creatButton()

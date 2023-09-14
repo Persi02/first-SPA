@@ -8,16 +8,35 @@
     align-items: center;
     top: 5px;
     border-radius: 50px;
+    right: 40px;
+    visibility: hidden;
+}
+
+.btn_trash {
+    position: absolute;
+    background-color: rgb(215, 8, 8);
+    height: 30px;
+    width: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    top: 5px;
+    border-radius: 50px;
     right: 5px;
     visibility: hidden;
 }
 
-.btn_edit.hover {
+.btn_edit.hover,
+.btn_trash.hover {
     visibility: visible;
 }
 
 .btn_edit svg {
     fill: rgb(0, 0, 0);
+    pointer-events: none;
+}
+
+.btn_trash svg {
     pointer-events: none;
 }
 

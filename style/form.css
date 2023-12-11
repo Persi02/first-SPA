@@ -1,0 +1,38 @@
+.input_email,
+.input_avata {
+    grid-column: 2;
+    margin-bottom: 20px;
+}
+
+input {
+    height: 30px;
+    padding-left: 10px;
+    font-family: sans-serif;
+}
+
+.input_file {
+    font-family: sans-serif;
+    font-size: 16px;
+    border-radius: 50px;
+    border: 2px solid black;
+    max-width: 400px;
+    padding: 2px;
+    height: 46px;
+}
+
+.input_file::-webkit-file-upload-button {
+    background: black;
+    color: white;
+    padding: 8px 16px;
+    border-radius: 50px;
+    cursor: pointer;
+}
+
+.input_file::-webkit-input-placeholder {}
+
+.form_add {
+    padding: 20px 100px;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 40px;
+}

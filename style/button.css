@@ -1,0 +1,84 @@
+.btn_edit {
+    position: absolute;
+    background-color: rgb(8, 215, 91);
+    height: 30px;
+    width: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    top: 5px;
+    border-radius: 50px;
+    right: 40px;
+    visibility: hidden;
+}
+
+.btn_trash {
+    position: absolute;
+    background-color: rgb(215, 8, 8);
+    height: 30px;
+    width: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    top: 5px;
+    border-radius: 50px;
+    right: 5px;
+    visibility: hidden;
+}
+
+.btn_edit.hover,
+.btn_trash.hover {
+    visibility: visible;
+}
+
+.btn_edit svg {
+    fill: rgb(0, 0, 0);
+    pointer-events: none;
+}
+
+.btn_trash svg {
+    pointer-events: none;
+}
+
+.btn-save,
+.btn-cancel {
+    max-width: 70px;
+    border: none;
+    height: 30px;
+    color: white;
+    font-size: 16px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.btn-save {
+    margin-left: 10px;
+    background-color: green;
+
+}
+
+.btn-cancel {
+    background-color: red;
+}
+
+.btn-retur {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 80px;
+    padding: 10px;
+    background-color: rgb(0, 157, 255);
+    cursor: pointer;
+    font-family: sans-serif;
+    color: white;
+}
+
+.button_creat {
+    border: none;
+    background-color: rgb(6, 121, 245);
+    color: white;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-size: 16px;
+    border-radius: 5px;
+}

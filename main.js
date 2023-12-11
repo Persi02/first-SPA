@@ -1,11 +1,14 @@
 import './style.css'
-import { creatButtonSA, fetchUser, fetchUsers, postUser } from './lib/crud';
+import { creatButtonSA, fetchUser, fetchUsers, postUser } from './lib/post';
+import { put } from './lib/updatUser';
+import { deletUser } from './lib/deletUser';
+
 const app = document.querySelector("#app");
 let name = "";
 let email = "";
 let avatar = "";
 
-//funtion featch data
+//funtion featch all data
 
 let allUsers = await fetchUsers();
 
@@ -37,6 +40,30 @@ const creatCard = async () => {
     card_user.classList.add("card");
     card_user.id = allUsers[i].id;
     cardContainer.appendChild(card_user);
+
+    const btnEdit = document.createElement("div");
+    btnEdit.id = allUsers[i].id;
+    btnEdit.classList.add("btn_edit");
+    btnEdit.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-pencil" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4" />
+  <path d="M13.5 6.5l4 4" />
+</svg>`;
+    card_user.appendChild(btnEdit);
+
+    const btnTrash = document.createElement("div");
+    btnTrash.id = allUsers[i].id;
+    btnTrash.classList.add("btn_trash");
+    btnTrash.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-trash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+   <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+   <path d="M4 7l16 0"></path>
+   <path d="M10 11l0 6"></path>
+   <path d="M14 11l0 6"></path>
+   <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12"></path>
+   <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3"></path>
+</svg>`;
+    card_user.appendChild(btnTrash);
+
     const card_avatar = document.createElement("figure");
     card_user.appendChild(card_avatar);
     const imageAvatar = document.createElement("img");
@@ -61,14 +88,36 @@ const creatCard = async () => {
       app.removeChild(cardContainer);
       const user = await fetchUser(e.target.id);
       const profil = await userProfil(user);
+    });
+    card_user.addEventListener('mouseover', () => {
+      btnEdit.classList.add("hover");
+      btnTrash.classList.add("hover");
+    });
+    card_user.addEventListener('mouseleave', () => {
+      btnEdit.classList.remove("hover");
+      btnTrash.classList.remove("hover");
+    });
+    btnEdit.addEventListener('click', async (e) => {
+      e.stopPropagation();
+      const user = await fetchUser(e.target.id)
+      app.removeChild(cardContainer);
+      addData(user)
+    });
+    btnTrash.addEventListener("click", async (e) => {
+      e.stopPropagation();
+      deletUser(e.target.id);
+      app.removeChild(cardContainer);
+      await fetchUsers();
+      creatCard();
     })
+
   }
   creatButton()
 }
 
 creatCard();
 
-//funtio info
+//funtion show info user
 const userProfil = async (user) => {
   const containerProfil = document.createElement("div");
   containerProfil.classList.add("container_profil");
@@ -108,66 +157,95 @@ const userProfil = async (user) => {
     await creatCard();
   })
 }
+//function creat input
+const creatInput = (classeName, type, placeholder) => {
+  const input = document.createElement("input");
+  input.classList.add(classeName);
+  input.setAttribute("type", type);
+  input.setAttribute("placeholder", placeholder);
+  return input
 
+}
 
-function addData() {
+// fonction creat page formulaire
+function addData(user) {
+
   const forme = document.createElement("form");
   forme.classList.add("form_add")
   app.appendChild(forme);
 
-  const inputFile = document.createElement("input");
-  inputFile.classList.add("input_file")
-  inputFile.setAttribute("type", "file");
+  const inputFile = creatInput("input_file", "file", "placeholder")
   inputFile.setAttribute("accept", "image/*");
 
 
   forme.appendChild(inputFile)
 
-  const inputName = document.createElement("input");
-  inputName.classList.add("input_name")
-  inputName.setAttribute("type", "text");
-  inputName.setAttribute("placeholder", "name");
+  const inputName = creatInput("input_name", "text", "name")
+  inputName.setAttribute("required", "required");
   forme.appendChild(inputName)
 
-  const inputEmail = document.createElement("input");
-  inputEmail.classList.add("input_email")
-  inputEmail.setAttribute("type", "email");
-  inputEmail.setAttribute("placeholder", "email");
+  const inputEmail = creatInput("input_email", "email", "email")
+  inputEmail.setAttribute("required", "required");
   forme.appendChild(inputEmail)
 
-  const inputAvatar = document.createElement("input");
-  inputAvatar.classList.add("input_avata")
-  inputAvatar.setAttribute("type", "text");
-  inputAvatar.setAttribute("placeholder", "avatar");
+  const inputAvatar = creatInput("input_avata", "text", "avatar")
+  inputAvatar.setAttribute("required", "required");
   forme.appendChild(inputAvatar)
 
   inputAvatar.addEventListener("click", () => {
 
   })
 
-  const buttonSav = creatButtonSA("submit", "btn-save", "Save");
+  const buttonSav = creatButtonSA("submit", "btn-save", user ? "save" : "creat ");
   const buttonCancel = creatButtonSA("button", "btn-cancel", "Cancel");
   forme.appendChild(buttonSav);
   forme.appendChild(buttonCancel);
+  if (user) {
+    inputName.value = user.name;
+    inputAvatar.value = user.avatar;
+    inputEmail.value = user.email;
+    name = user.name;
+    avatar = user.avatar;
+    email = user.email;
+  }
   inputName.addEventListener("input", (e) => {
-    name = e.target.value;
+    name = e.target.value.trim();
   })
   inputEmail.addEventListener("input", (e) => {
-    email = e.target.value;
+    email = e.target.value.trim();
   })
   inputAvatar.addEventListener("input", (e) => {
-    avatar = e.target.value;
+    avatar = e.target.value.trim();
   })
   buttonSav.addEventListener("click", async (e) => {
     e.preventDefault();
-    await postUser({ name, email, avatar });
-    const form = document.querySelector(".form_add");
-    app.removeChild(form)
-    name = "";
-    email = "";
-    avatar = "";
+    if (user) {
+      if (name != '' && email != '' && avatar != '') {
+        await put(user.id, { name, email, avatar });
+        const form = document.querySelector(".form_add");
+        app.removeChild(form)
+        name = "";
+        email = "";
+        avatar = "";
+        await creatCard();
+      }
+    } else {
+      if (name != '' && email != '' && avatar != '') {
+        await postUser({ name, email, avatar });
+        const form = document.querySelector(".form_add");
+        app.removeChild(form)
+        name = "";
+        email = "";
+        avatar = "";
+        await creatCard();
+      }
+    }
 
-    await creatCard();
+
+  })
+  buttonCancel.addEventListener("click", () => {
+    app.removeChild(forme);
+    creatCard();
   })
 
 }
